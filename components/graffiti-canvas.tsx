@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { useRef, useState, useCallback } from "react"
-import { BrickWall } from "./brick-wall"
-import { SprayCan } from "./spray-can"
-import { Button } from "@/components/ui/button"
-import { Trash2, Download } from "lucide-react"
+import { useRef, useState, useCallback } from "react";
+import { BrickWall } from "./brick-wall";
+import { SprayCan } from "./spray-can";
+import { Button } from "@/components/ui/button";
+import { Trash2, Download } from "lucide-react";
 
 const SPRAY_COLORS = [
   { color: "rgb(220, 38, 38)", label: "Fire Red" },
@@ -13,54 +13,55 @@ const SPRAY_COLORS = [
   { color: "rgb(250, 204, 21)", label: "Neon Yellow" },
   { color: "rgb(168, 85, 247)", label: "Purple Haze" },
   { color: "rgb(15, 15, 15)", label: "Midnight Black" },
-]
+];
 
 export function GraffitiCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [selectedColor, setSelectedColor] = useState(SPRAY_COLORS[0].color)
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [selectedColor, setSelectedColor] = useState(SPRAY_COLORS[0].color);
 
   const handleClear = useCallback(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext("2d")
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
     if (ctx) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
-  }, [])
+  }, []);
 
   const handleDownload = useCallback(() => {
-    const drawingCanvas = canvasRef.current
-    if (!drawingCanvas) return
+    const drawingCanvas = canvasRef.current;
+    if (!drawingCanvas) return;
 
     // Create a combined canvas
-    const combinedCanvas = document.createElement("canvas")
-    combinedCanvas.width = drawingCanvas.width
-    combinedCanvas.height = drawingCanvas.height
-    const ctx = combinedCanvas.getContext("2d")
-    if (!ctx) return
+    const combinedCanvas = document.createElement("canvas");
+    combinedCanvas.width = drawingCanvas.width;
+    combinedCanvas.height = drawingCanvas.height;
+    const ctx = combinedCanvas.getContext("2d");
+    if (!ctx) return;
 
     // Draw brick pattern first
-    const brickPatternCanvas = drawingCanvas.previousElementSibling as HTMLCanvasElement
+    const brickPatternCanvas =
+      drawingCanvas.previousElementSibling as HTMLCanvasElement;
     if (brickPatternCanvas) {
-      ctx.drawImage(brickPatternCanvas, 0, 0)
+      ctx.drawImage(brickPatternCanvas, 0, 0);
     }
 
     // Draw the graffiti on top
-    ctx.drawImage(drawingCanvas, 0, 0)
+    ctx.drawImage(drawingCanvas, 0, 0);
 
     // Download
-    const link = document.createElement("a")
-    link.download = `graffiti-art-${Date.now()}.png`
-    link.href = combinedCanvas.toDataURL("image/png")
-    link.click()
-  }, [])
+    const link = document.createElement("a");
+    link.download = `graffiti-art-${Date.now()}.png`;
+    link.href = combinedCanvas.toDataURL("image/png");
+    link.click();
+  }, []);
 
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-background">
       {/* Main canvas area - takes all available space */}
       <div className="flex-1 relative">
         <BrickWall selectedColor={selectedColor} canvasRef={canvasRef} />
-        
+
         {/* Vignette overlay for atmosphere */}
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_50%,rgba(0,0,0,0.3)_100%)]" />
       </div>
@@ -93,6 +94,40 @@ export function GraffitiCanvas() {
               <span className="hidden sm:inline">Clear</span>
             </Button>
             <Button
+              variant="outline"
+              size="lg"
+              onClick={() => {
+                const url = "https://graffiti-spray-experience.vercel.app";
+                if (navigator.share) {
+                  navigator.share({
+                    title: "Street Canvas - Graffiti Spray Paint",
+                    text: "Create stunning street art on a realistic brick wall canvas with authentic spray paint dynamics",
+                    url: url,
+                  });
+                } else {
+                  // Fallback: copy URL to clipboard
+                  navigator.clipboard.writeText(url);
+                  // You could add a toast notification here
+                }
+              }}
+              className="gap-2 border-border hover:bg-accent hover:text-accent-foreground bg-white text-black"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6L3 4m-.752 7.316A3 3 0 103 14m0-2V9.316m0 2.684a3 3 0 103-3m-3 3h9m-9 3v3a3 3 0 106 0v-3"
+                />
+              </svg>
+              <span className="hidden sm:inline">Share</span>
+            </Button>
+            <Button
               size="lg"
               onClick={handleDownload}
               className="gap-2 bg-primary hover:bg-primary/90"
@@ -104,5 +139,5 @@ export function GraffitiCanvas() {
         </div>
       </div>
     </div>
-  )
+  );
 }
