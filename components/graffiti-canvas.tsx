@@ -67,8 +67,8 @@ export function GraffitiCanvas() {
       </div>
 
       {/* Bottom toolbar */}
-      <div className="bg-card/95 backdrop-blur-md border-t border-border">
-        <div className="flex items-center justify-between px-4 py-4 md:px-8">
+      <div className="bg-card/95 backdrop-blur-md border-t border-border rounded-t-xl">
+        <div className="flex items-center justify-center px-4 py-4 md:px-8">
           {/* Spray cans */}
           <div className="flex items-end gap-3 md:gap-6 overflow-x-auto pb-2 scrollbar-hide">
             {SPRAY_COLORS.map((sprayColor) => (
